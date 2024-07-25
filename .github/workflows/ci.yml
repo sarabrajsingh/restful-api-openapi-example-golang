@@ -1,0 +1,46 @@
+name: GitHub Actions CI
+run-name: ${{ github.actor }}'s CI pipeline for the project 🚀
+
+on: [push]
+
+jobs:
+  Compile-and-Test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set time zone
+        run: |
+          sudo timedatectl set-timezone America/New_York # Replace with your local time zone
+        shell: bash
+
+      - name: Set up Go 1.21.6
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21.6
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Build the project
+        run: go build -o app-tesla-api
+
+      - name: Install mockgen
+        run: go install github.com/golang/mock/mockgen@v1.6.0
+
+      - name: Generate mocks
+        run: |
+          make mockgen
+
+      - name: Run tests
+        run: go test -v ./...

@@ -1,0 +1,136 @@
+openapi: 3.1.0
+info:
+  title: Tesla Energy Service Engineering Data Engineer Evaluation
+  description: API developed by Sarabraj Singh for the take-home assignment
+  version: 1.0.0
+servers:
+  - url: /api/v1
+    description: Local Testing Server and the Google App Engine Server
+paths:
+  /:
+    get:
+      summary: Home Page
+      description: Serves the Swagger documentation
+      responses:
+        "200":
+          description: OK
+          content:
+            text/html:
+              schema:
+                type: string
+                example: |
+                  <!DOCTYPE html>
+                  <html lang="en">
+                  <head>
+                      <meta charset="UTF-8">
+                      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                      <title>Home Page</title>
+                      <style>
+                          body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+                          .container { width: 80%; margin: 0 auto; padding: 20px; }
+                          h1 { color: #333; }
+                      </style>
+                  </head>
+                  <body>
+                      <div class="container">
+                          <h1>Welcome to the Home Page</h1>
+                          <p>This is the main page of the application. Here you can find various resources and documentation.</p>
+                          <p><a href="/docs">Go to Documentation</a></p>
+                      </div>
+                  </body>
+                  </html>
+  /temp:
+    post:
+      summary: An endpoint that accepts a user request for interpretation
+      description: |
+        This endpoint validates JSON blobs being sent from a client. There are two possible good responses, which are determined based
+        on the JSON blurb coming into the endpoint. If the request is invalid, or fails the internal validation machinery, an error is returned.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TempPostBody'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/TempPostGoodResponseWithOverTemp'
+                  - $ref: '#/components/schemas/TempPostGoodResponseWithNoOverTemp'
+        "400":
+          description: Bad user request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TempPostBadRequest400'
+  /errors:
+    get:
+      summary: Get errors
+      description: Retrieves a list of errors that were captured in the API
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetErrorsResponse'
+    delete:
+      summary: Clears the error buffer
+      description: Deletes the errors that the API is currently holding in-memory.
+      responses:
+        "200":
+          description: OK
+components:
+  schemas:
+    TempPostBody:
+      type: object
+      properties:
+        data:
+          type: string
+          example: 365951380:1722089835:'Temperature':98.48256793121914
+      required:
+      - data
+    TempPostGoodResponseWithOverTemp:
+      type: object
+      properties:
+        overtemp:
+          type: boolean
+          example: true
+        device_id:
+          type: integer
+          example: 365951380
+        formatted_time:
+          type: string
+          example: 2024/07/27 14:17:15
+      required:
+        - overtemp
+        - device_id
+        - formatted_time
+    TempPostGoodResponseWithNoOverTemp:
+      type: object
+      properties:
+        overtemp:
+          type: boolean
+          example: false
+      required:
+        - overtemp
+    TempPostBadRequest400:
+      type: object
+      properties:
+        error:
+          type: string
+          example: bad request
+    GetErrorsResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: string
+            example: "__error1__, __error2__"
+      example:
+        errors:
+        - "__error1__, __error2__"
