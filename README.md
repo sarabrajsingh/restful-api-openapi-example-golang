@@ -1,4 +1,4 @@
-# API developed by Sarabraj Singh for the take-home assignment.
+# An Example of an almost-Production grade RESTful API Microservice Written in Golang
 
 ## Table of Contents
 
