@@ -4,7 +4,7 @@ steps:
     id: 'hello-world'
     script: |
       #!/usr/bin/env bash
-      echo "✅ HELLO WORLD!"
+      echo "✅ HELLO ABEL's WORLD!"
       echo "🚀 The Cloud Build trigger successfully received the webhook."
 
   # Step 2: Verify the repository was cloned successfully
@@ -17,4 +17,4 @@ steps:
       echo "🎉 Developer Connect successfully pulled the code across the project boundary!"
 
 options:
-  logging: CLOUD_LOGGING_ONLY
+  logging: CLOUD_LOGGING_ONLY`
