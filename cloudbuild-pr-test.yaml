@@ -1,0 +1,17 @@
+steps:
+  # Step 1: Print Hello World and PR details
+  - name: 'ubuntu'
+    script: |
+      echo "Hello World from the Pull Request pipeline!"
+      echo "This PR is attempting to merge into base branch: $TARGET_BRANCH"
+      echo "The commit SHA is: $COMMIT_SHA"
+
+  # Step 2: List repository contents to prove connection
+  - name: 'ubuntu'
+    script: |
+      echo "Listing repository files fetched by Developer Connect:"
+      ls -la
+
+options:
+  # Ensuring no quotation marks around the enum value
+  logging: CLOUD_LOGGING_ONLY
