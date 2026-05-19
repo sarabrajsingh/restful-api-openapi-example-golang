@@ -16,5 +16,10 @@ steps:
       ls -la
       echo "🎉 Developer Connect successfully pulled the code across the project boundary!"
 
+  # Step 3:
+  - name: 'daisy chain call to CD / cloud deploy'
+  #   blah blah blah
+  # - INVOKE CD Trigger HERE
+
 options:
   logging: CLOUD_LOGGING_ONLY
