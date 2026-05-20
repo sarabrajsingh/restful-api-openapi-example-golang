@@ -16,10 +16,18 @@ steps:
       ls -la
       echo "🎉 Developer Connect successfully pulled the code across the project boundary!"
 
-  # Step 3:
-  - name: 'daisy chain call to CD / cloud deploy'
-  #   blah blah blah
-  # - INVOKE CD Trigger HERE
+  # Step 3: Daisy chain call to Cloud Deploy
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'trigger-cloud-deploy'
+    entrypoint: 'gcloud'
+    args:
+      - 'deploy'
+      - 'releases'
+      - 'create'
+      - 'release-$SHORT_SHA'                                                       
+      - '--delivery-pipeline=${var.application_name}-delivery-pipeline'              
+      - '--region=${var.region}'              
+      - '--source=.'                      
 
 options:
   logging: CLOUD_LOGGING_ONLY
