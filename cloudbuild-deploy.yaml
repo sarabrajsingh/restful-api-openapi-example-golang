@@ -25,8 +25,8 @@ steps:
       - 'releases'
       - 'create'
       - 'release-$SHORT_SHA'                                                       
-      - '--delivery-pipeline=${var.application_name}-delivery-pipeline'              
-      - '--region=${var.region}'              
+      - '--delivery-pipeline=$_PIPELINE_NAME'  # <--- Updated to Cloud Build syntax            
+      - '--region=$_REGION'                    # <--- Updated to Cloud Build syntax
       - '--source=.'                      
 
 options:
