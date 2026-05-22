@@ -16,6 +16,14 @@ steps:
       ls -la
       echo "🎉 Developer Connect successfully pulled the code across the project boundary!"
 
+  - name: Terraform Plan
+    id: terraform-plan
+    script: |
+      bash terraform/render.sh
+      cd terraform
+      terraform init
+      terraform validate
+
   # Step 3: Daisy chain call to Cloud Deploy
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'trigger-cloud-deploy'
