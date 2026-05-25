@@ -1,5 +1,4 @@
 steps:
-  # Step 1: Verify the repository was cloned successfully
   - name: 'ubuntu'
     id: 'verify-clone'
     script: |
@@ -9,9 +8,8 @@ steps:
       ls -la terraform/
       echo "🎉 Developer Connect successfully pulled the code!"
 
-# cloud deploy apply
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: 'trigger-cloud-deploy'
+    id: 'trigger-cloud-apply'
     entrypoint: 'gcloud'
     args:
       - 'deploy'
@@ -20,7 +18,6 @@ steps:
       - '--region=$_REGION'
       - '--project=$_PROJECT_ID'
 
-  # Step 2: Daisy chain call to Cloud Deploy
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'trigger-cloud-deploy'
     entrypoint: 'gcloud'
