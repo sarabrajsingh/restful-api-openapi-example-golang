@@ -16,7 +16,7 @@ metadata:
   name: dev
 description: Development environment
 deployParameters:
-  project_id: "dev-project-a9403b81"
+  project_id: "app1-dev-8c0e2f7a"
   environment: "dev"
 executionConfigs:
 - usages:
@@ -33,7 +33,7 @@ metadata:
   name: staging
 description: Staging environment
 deployParameters:
-  project_id: "staging-project-a9403b81"
+  project_id: "app1-test-8c0e2f7a"
   environment: "staging"
 executionConfigs:
 - usages:
@@ -50,7 +50,7 @@ metadata:
   name: prod
 description: Production environment
 deployParameters:
-  project_id: "prod-project-a9403b81"
+  project_id: "app1-prod-8c0e2f7a"
   environment: "prod"
 executionConfigs:
 - usages:
