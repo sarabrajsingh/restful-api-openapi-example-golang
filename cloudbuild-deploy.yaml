@@ -1,4 +1,10 @@
+###
+# $_REGION, $_PROJECT_ID and $_PIPELINE_NAME are the variables that will be passed from the trigger in GCP. These are defined via the pipeline configuration in Terraform.
+# This file triggers on merges to the main branch.
+###
+
 steps:
+  # Step 1: Verify the repository was cloned successfully
   - name: 'ubuntu'
     id: 'verify-clone'
     script: |
@@ -8,16 +14,18 @@ steps:
       ls -la terraform/
       echo "🎉 Developer Connect successfully pulled the code!"
 
+  # Step 2: Register the Pipeline in GCP (The Missing Link!)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: 'trigger-cloud-apply'
+    id: 'register-pipeline'
     entrypoint: 'gcloud'
     args:
       - 'deploy'
       - 'apply'
-      - '--file=build-deploy/clouddeploy.yaml'
+      - '--file=build-deploy/clouddeploy.yaml'   # <-- Ensures Cloud Deploy reads your target configurations
       - '--region=$_REGION'
-      - '--project=$_PROJECT_ID'
+      - '--project=$_PROJECT_ID'    # <-- Deploys the pipeline to the shared CI/CD hub
 
+  # Step 3: Daisy chain call to trigger the release
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'trigger-cloud-deploy'
     entrypoint: 'gcloud'
