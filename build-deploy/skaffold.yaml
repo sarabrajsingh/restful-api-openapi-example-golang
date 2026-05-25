@@ -1,0 +1,39 @@
+apiVersion: skaffold/v4beta7
+kind: Config
+metadata:
+  name: terraform-delivery-pipeline
+customActions:
+- name: terraform-render
+  containers:
+  - name: terraform-render-container
+    image: google/cloud-sdk:alpine
+    command: ["/bin/sh"]
+    args:
+    - "-c"
+    - |
+      wget https://releases.hashicorp.com/terraform/1.5.7/terraform_1.5.7_linux_amd64.zip
+      unzip terraform_1.5.7_linux_amd64.zip -d /usr/local/bin/
+      
+      mkdir -p /workspace
+      gsutil cp "$CLOUD_DEPLOY_INPUT_GCS_PATH" /workspace/source.tgz
+      tar -xzvf /workspace/source.tgz -C /workspace
+      
+      cd /workspace
+      sh ./terraform/render.sh
+- name: terraform-deploy
+  containers:
+  - name: terraform-deploy-container
+    image: google/cloud-sdk:alpine
+    command: ["/bin/sh"]
+    args:
+    - "-c"
+    - |
+      wget https://releases.hashicorp.com/terraform/1.5.7/terraform_1.5.7_linux_amd64.zip
+      unzip terraform_1.5.7_linux_amd64.zip -d /usr/local/bin/
+      
+      mkdir -p /workspace
+      gsutil cp "$CLOUD_DEPLOY_INPUT_GCS_PATH/workspace.tgz" /workspace/workspace.tgz
+      tar -xzvf /workspace/workspace.tgz -C /workspace
+      
+      cd /workspace
+      sh ./terraform/deploy.sh
