@@ -21,14 +21,16 @@ steps:
     id: 'terraform-plan'
     script: |
       #!/bin/sh
+      set -e
+      
       echo "⚙️ Rendering custom scripts..."
       sh terraform/render.sh
       
       echo "🔍 Running Terraform Plan..."
       cd terraform
 
-      terraform init -backend-config="prefix=state/prod"
-      
+      terraform init -reconfigure -backend-config="prefix=state/staging"
+
       terraform validate
 
       terraform plan -var="project_id=app1-prod-dryrun" -var="environment=prod"
