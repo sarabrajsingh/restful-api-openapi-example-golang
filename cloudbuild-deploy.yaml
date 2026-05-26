@@ -25,18 +25,17 @@ steps:
       - '--region=$_REGION'
       - '--project=$_PROJECT_ID'    # <-- Deploys the pipeline to the shared CI/CD hub
 
-  # Step 3: Daisy chain call to trigger the release. this step slurps the skaffold.yaml file, defined by the --source= pointer.
+  # Step 3: Daisy chain call to trigger the release
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'trigger-cloud-deploy'
-    entrypoint: 'gcloud'
+    entrypoint: 'bash'
     args:
-      - 'deploy'
-      - 'releases'
-      - 'create'
-      - 'release-$SHORT_SHA-$BUILD_ID'                                                       
-      - '--delivery-pipeline=$_PIPELINE_NAME'             
-      - '--region=$_REGION'                    
-      - '--source=./build-deploy'                      
+      - '-c'
+      - |
+        gcloud deploy releases create release-$SHORT_SHA-${BUILD_ID:0:8} \
+          --delivery-pipeline=$_PIPELINE_NAME \
+          --region=$_REGION \
+          --source=./build-deploy                    
 
 options:
   logging: CLOUD_LOGGING_ONLY
