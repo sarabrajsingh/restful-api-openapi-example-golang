@@ -29,13 +29,16 @@ steps:
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'trigger-cloud-deploy'
     entrypoint: 'bash'
+    env:
+      - 'BUILD_ID=$BUILD_ID'       # <--- Injects Cloud Build variable into Bash
+      - 'SHORT_SHA=$SHORT_SHA'     # <--- Injects Cloud Build variable into Bash
     args:
       - '-c'
       - |
-        gcloud deploy releases create release-$SHORT_SHA-${BUILD_ID:0:8} \
+        gcloud deploy releases create release-${SHORT_SHA}-${BUILD_ID:0:8} \
           --delivery-pipeline=$_PIPELINE_NAME \
           --region=$_REGION \
-          --source=./build-deploy                    
+          --source=./build-deploy                  
 
 options:
   logging: CLOUD_LOGGING_ONLY
