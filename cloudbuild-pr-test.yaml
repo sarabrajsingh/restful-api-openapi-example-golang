@@ -17,10 +17,10 @@ steps:
       echo "🎉 Developer Connect successfully pulled the code across the project boundary!"
 
   # Step 3: Validate the Terraform Code (Dry-Run)
-  - name: 'hashicorp/terraform:1.5.7' # <-- This tells GCP which Docker image to use!
+  - name: 'hashicorp/terraform:1.5.7'
     id: 'terraform-plan'
     script: |
-      #!/usr/bin/env bash
+      #!/bin/sh
       echo "⚙️ Rendering custom scripts..."
       sh terraform/render.sh
       
