@@ -14,7 +14,7 @@ steps:
       ls -la
       echo "🎉 Developer Connect successfully pulled the code across the project boundary!"
 
-  # Step 3: Pure Terraform Validation (No render.sh!)
+  # Step 3: Pure Terraform Validation 
   - name: 'hashicorp/terraform:1.5.7'
     id: 'terraform-plan'
     script: |
@@ -24,7 +24,9 @@ steps:
       echo "🔍 Running Terraform Plan for DEV..."
       cd terraform
 
-      terraform init -reconfigure -backend-config="prefix=terraform/state/dev"
+      terraform init -reconfigure \
+        -backend-config="bucket=app1-cicd-8c0e2f7a-tfstate" \
+        -backend-config="prefix=terraform/state/dev"
 
       terraform validate
 
