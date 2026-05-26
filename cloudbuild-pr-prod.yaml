@@ -29,8 +29,7 @@ steps:
       terraform init
       terraform validate
       
-      # We run a plan to catch syntax/state errors, but we DO NOT apply it here!
-      terraform plan
+      terraform plan -var="project_id=app1-prod-dryrun" -var="environment=prod"
 
 options:
   logging: CLOUD_LOGGING_ONLY
