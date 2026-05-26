@@ -33,7 +33,7 @@ steps:
       - 'deploy'
       - 'releases'
       - 'create'
-      - 'release-$SHORT_SHA'                                                       
+      - 'release-$SHORT_SHA-$BUILD_ID'                                                       
       - '--delivery-pipeline=$_PIPELINE_NAME'             
       - '--region=$_REGION'                    
       - '--source=./build-deploy'                      
