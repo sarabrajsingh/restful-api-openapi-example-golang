@@ -1,35 +1,28 @@
 steps:
-  # Step 1: Print a Hello World success message
   - name: 'ubuntu'
     id: 'hello-world'
     script: |
       #!/usr/bin/env bash
       echo "✅ HELLO WORLD!"
-      echo "🚀 The Cloud Build trigger successfully received the webhook."
 
-  # Step 2: Verify the repository was cloned successfully
   - name: 'ubuntu'
     id: 'verify-clone'
     script: |
       #!/usr/bin/env bash
       echo "📁 Verifying repository contents..."
       ls -la
-      echo "🎉 Developer Connect successfully pulled the code across the project boundary!"
 
-  # Step 3: Validate the Terraform Code (Dry-Run)
+  # Step 3: Pure Terraform Validation 
   - name: 'hashicorp/terraform:1.5.7'
     id: 'terraform-plan'
     script: |
       #!/bin/sh
       set -e
       
-      echo "⚙️ Rendering custom scripts..."
-      sh terraform/render.sh
-      
-      echo "🔍 Running Terraform Plan..."
+      echo "🔍 Running Terraform Plan for STAGING..."
       cd terraform
 
-      terraform init -reconfigure -backend-config="prefix=state/staging"
+      terraform init -reconfigure -backend-config="prefix=terraform/state/staging"
 
       terraform validate
       
