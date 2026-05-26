@@ -371,3 +371,5 @@ INFO: 2024/07/27 15:26:35 logger.go:20: POST	/api/v1/temp	TempPost	172.17.0.1:53
 INFO: 2024/07/27 15:26:35 logger.go:24: POST /api/v1/temp - Malformed data string received. Error:  could not parse device_id=36595138029567120956 to an int32
 INFO: 2024/07/27 15:26:35 logger.go:20: appending [36595138029567120956:1722089835:'Temperature':89.48256793121914] to errorBuffer
 ```
+
+
