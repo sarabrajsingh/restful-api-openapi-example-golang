@@ -5,7 +5,7 @@ steps:
     script: |
       #!/usr/bin/env bash
       echo "✅ HELLO WORLD!"
-      echo "🚀 The Cloud Build trigger successfully received the webhook."
+      echo "🚀 The Cloud Build PR trigger successfully received the webhook."
 
   # Step 2: Verify the repository was cloned successfully
   - name: 'ubuntu'
@@ -16,26 +16,21 @@ steps:
       ls -la
       echo "🎉 Developer Connect successfully pulled the code across the project boundary!"
 
-  - name: Terraform Plan
-    id: terraform-plan
+  # Step 3: Validate the Terraform Code (Dry-Run)
+  - name: 'hashicorp/terraform:1.5.7' # Using the official Terraform image
+    id: 'terraform-plan'
     script: |
-      bash terraform/render.sh
+      #!/usr/bin/env bash
+      echo "⚙️ Rendering custom scripts..."
+      sh terraform/render.sh
+      
+      echo "🔍 Running Terraform Plan..."
       cd terraform
       terraform init
       terraform validate
-
-  # Step 3: Daisy chain call to Cloud Deploy
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: 'trigger-cloud-deploy'
-    entrypoint: 'gcloud'
-    args:
-      - 'deploy'
-      - 'releases'
-      - 'create'
-      - 'release-$SHORT_SHA'              # Dynamically names the release after the Git commit hash
-      - '--delivery-pipeline=my-pipeline' # <-- UPDATE THIS to your actual pipeline name
-      - '--region=us-east1'               # <-- UPDATE THIS to your pipeline's region
-      - '--source=.'                      # Points Cloud Deploy to your skaffold.yaml in the root directory
+      
+      # We run a plan to catch syntax/state errors, but we DO NOT apply it here!
+      terraform plan
 
 options:
   logging: CLOUD_LOGGING_ONLY
