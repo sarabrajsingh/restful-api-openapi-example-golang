@@ -40,7 +40,7 @@ steps:
           --delivery-pipeline=$_PIPELINE_NAME \
           --region=$_REGION \
           --source=. \                                       # <-- Zips the whole repo so ./terraform/ is included
-          --skaffold-file=build-deploy/skaffold.yaml         # <-- Explicitly points to the nested instructions 
+          --skaffold-file=./build-deploy/skaffold.yaml         # <-- Explicitly points to the nested instructions 
 
 options:
   logging: CLOUD_LOGGING_ONLY
