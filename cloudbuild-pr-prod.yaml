@@ -26,9 +26,11 @@ steps:
       
       echo "🔍 Running Terraform Plan..."
       cd terraform
-      terraform init
-      terraform validate
+
+      terraform init -backend-config="prefix=state/prod"
       
+      terraform validate
+
       terraform plan -var="project_id=app1-prod-dryrun" -var="environment=prod"
 
 options:
