@@ -15,6 +15,7 @@ kind: Target
 metadata:
   name: dev
 description: Development environment
+# No approval required for Dev - pure continuous deployment
 deployParameters:
   project_id: "app1-dev-8c0e2f7a"
   environment: "dev"
@@ -32,6 +33,7 @@ kind: Target
 metadata:
   name: staging
 description: Staging environment
+requireApproval: true # <--- Halts the pipeline here after Render!
 deployParameters:
   project_id: "app1-test-8c0e2f7a"
   environment: "staging"
@@ -49,6 +51,7 @@ kind: Target
 metadata:
   name: prod
 description: Production environment
+requireApproval: true # <--- Halts the pipeline here after Render!
 deployParameters:
   project_id: "app1-prod-8c0e2f7a"
   environment: "prod"
@@ -68,4 +71,3 @@ description: Terraform Custom Target Type
 customActions:
   renderAction: terraform-render
   deployAction: terraform-deploy
-

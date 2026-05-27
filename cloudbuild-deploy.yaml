@@ -22,7 +22,7 @@ steps:
     args:
       - 'deploy'
       - 'apply'
-      - '--file=build-deploy/clouddeploy.yaml'   # <-- Points to the nested pipeline definition
+      - '--file=build-deploy/clouddeploy.yaml'
       - '--region=$_REGION'
       - '--project=$_PROJECT_ID'    
 
@@ -31,12 +31,11 @@ steps:
     id: 'trigger-cloud-deploy'
     entrypoint: 'bash'
     env:
-      - 'BUILD_ID=$BUILD_ID'       
+      - 'BUILD_ID=$BUILD_ID'
       - 'SHORT_SHA=$SHORT_SHA'     
     args:
       - '-c'
       - |
-        # Zips the whole repo (--source=.) and explicitly points to the nested instructions (--skaffold-file)
         gcloud deploy releases create release-${SHORT_SHA}-${BUILD_ID:0:8} \
           --delivery-pipeline=$_PIPELINE_NAME \
           --region=$_REGION \
