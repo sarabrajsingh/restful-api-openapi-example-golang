@@ -23,7 +23,7 @@ executionConfigs:
 - usages:
   - RENDER
   - DEPLOY
-  serviceAccount: "dev-pipeline-sa@app1-cicd-8c0e2f7a.iam.gserviceaccount.com"
+  serviceAccount: "dev-pipeline-sa@app1-dev-8c0e2f7a.iam.gserviceaccount.com"
 customTarget:
   customTargetType: terraform-custom-target
 
@@ -41,7 +41,7 @@ executionConfigs:
 - usages:
   - RENDER
   - DEPLOY
-  serviceAccount: "test-pipeline-sa@app1-cicd-8c0e2f7a.iam.gserviceaccount.com"
+  serviceAccount: "test-pipeline-sa@app1-test-8c0e2f7a.iam.gserviceaccount.com"
 customTarget:
   customTargetType: terraform-custom-target
 
@@ -59,7 +59,7 @@ executionConfigs:
 - usages:
   - RENDER
   - DEPLOY
-  serviceAccount: "prod-pipeline-sa@app1-cicd-8c0e2f7a.iam.gserviceaccount.com"
+  serviceAccount: "prod-pipeline-sa@app1-prod-8c0e2f7a.iam.gserviceaccount.com"
 customTarget:
   customTargetType: terraform-custom-target
 ---
