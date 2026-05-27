@@ -1,65 +1,59 @@
 apiVersion: deploy.cloud.google.com/v1
 kind: DeliveryPipeline
 metadata:
-  name: app1-delivery-pipeline
+  name: terraform-delivery-pipeline
 description: Delivery pipeline for Terraform GCS bucket deployments
 serialPipeline:
   stages:
   - targetId: dev
   - targetId: staging
   - targetId: prod
-
 ---
 apiVersion: deploy.cloud.google.com/v1
 kind: Target
 metadata:
   name: dev
 description: Development environment
-# No approval required for Dev - pure continuous deployment
 deployParameters:
-  project_id: "app1-dev-8c0e2f7a"
+  project_id: "dev-project-a9403b81"
   environment: "dev"
 executionConfigs:
 - usages:
   - RENDER
   - DEPLOY
-  serviceAccount: "dev-pipeline-sa@app1-dev-8c0e2f7a.iam.gserviceaccount.com"
+  serviceAccount: "dev-pipeline-sa@app1-cicd-8c0e2f7a.iam.gserviceaccount.com"
 customTarget:
   customTargetType: terraform-custom-target
-
 ---
 apiVersion: deploy.cloud.google.com/v1
 kind: Target
 metadata:
   name: staging
 description: Staging environment
-requireApproval: true # <--- Halts the pipeline here after Render!
 deployParameters:
-  project_id: "app1-test-8c0e2f7a"
+  project_id: "staging-project-a9403b81"
   environment: "staging"
 executionConfigs:
 - usages:
   - RENDER
   - DEPLOY
-  serviceAccount: "test-pipeline-sa@app1-test-8c0e2f7a.iam.gserviceaccount.com"
+  serviceAccount: "test-pipeline-sa@app1-cicd-8c0e2f7a.iam.gserviceaccount.com"
 customTarget:
   customTargetType: terraform-custom-target
-
 ---
 apiVersion: deploy.cloud.google.com/v1
 kind: Target
 metadata:
   name: prod
 description: Production environment
-requireApproval: true # <--- Halts the pipeline here after Render!
 deployParameters:
-  project_id: "app1-prod-8c0e2f7a"
+  project_id: "prod-project-a9403b81"
   environment: "prod"
 executionConfigs:
 - usages:
   - RENDER
   - DEPLOY
-  serviceAccount: "prod-pipeline-sa@app1-prod-8c0e2f7a.iam.gserviceaccount.com"
+  serviceAccount: "prod-pipeline-sa@app1-cicd-8c0e2f7a.iam.gserviceaccount.com"
 customTarget:
   customTargetType: terraform-custom-target
 ---
@@ -71,3 +65,4 @@ description: Terraform Custom Target Type
 customActions:
   renderAction: terraform-render
   deployAction: terraform-deploy
+
