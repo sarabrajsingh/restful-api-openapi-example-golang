@@ -18,7 +18,7 @@ customActions:
       gsutil cp "$CLOUD_DEPLOY_INPUT_GCS_PATH" /workspace/source.tgz
       tar -xzvf /workspace/source.tgz -C /workspace/src
       
-      cd /workspace/src
+      cd /workspace/src/terraform
       zip -r /workspace/source.zip .
       
       gsutil cp /workspace/source.zip gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE}-${environment}.zip
@@ -48,7 +48,7 @@ customActions:
       gsutil cp "$CLOUD_DEPLOY_INPUT_GCS_PATH" /workspace/source.tgz
       tar -xzvf /workspace/source.tgz -C /workspace/src
       
-      cd /workspace/src
+      cd /workspace/src/terraform
       zip -r /workspace/source.zip .
       
       gsutil cp /workspace/source.zip gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE}-${environment}.zip
