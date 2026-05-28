@@ -11,15 +11,15 @@ customActions:
     args:
     - "-c"
     - |
-      wget https://releases.hashicorp.com/terraform/1.5.7/terraform_1.5.7_linux_amd64.zip
-      unzip terraform_1.5.7_linux_amd64.zip -d /usr/local/bin/
-      
-      mkdir -p /workspace
-      gsutil cp "$CLOUD_DEPLOY_INPUT_GCS_PATH" /workspace/source.tgz
-      tar -xzvf /workspace/source.tgz -C /workspace
-      
-      cd /workspace
-      sh ./terraform/render.sh
+      gcloud infra-manager previews create preview-${CLOUD_DEPLOY_RELEASE_ID} \
+        --config-source="${CLOUD_DEPLOY_INPUT_GCS_PATH}" \
+        --project="${project_id}" \
+        --location="us-east1"
+        
+      echo '' > manifest.yaml
+      gsutil cp manifest.yaml "$CLOUD_DEPLOY_OUTPUT_GCS_PATH/manifest.yaml"
+      echo "{\"resultStatus\": \"SUCCEEDED\", \"manifestFile\": \"$CLOUD_DEPLOY_OUTPUT_GCS_PATH/manifest.yaml\"}" > results.json
+      gsutil cp results.json "$CLOUD_DEPLOY_OUTPUT_GCS_PATH/results.json"
 - name: terraform-deploy
   containers:
   - name: terraform-deploy-container
@@ -28,12 +28,11 @@ customActions:
     args:
     - "-c"
     - |
-      wget https://releases.hashicorp.com/terraform/1.5.7/terraform_1.5.7_linux_amd64.zip
-      unzip terraform_1.5.7_linux_amd64.zip -d /usr/local/bin/
-      
-      mkdir -p /workspace
-      gsutil cp "$CLOUD_DEPLOY_INPUT_GCS_PATH/workspace.tgz" /workspace/workspace.tgz
-      tar -xzvf /workspace/workspace.tgz -C /workspace
-      
-      cd /workspace
-      sh ./terraform/deploy.sh
+      gcloud infra-manager deployments apply deploy-${CLOUD_DEPLOY_RELEASE_ID} \
+        --config-source="${CLOUD_DEPLOY_INPUT_GCS_PATH}" \
+        --project="${project_id}" \
+        --location="us-east1" \
+        --service-account="projects/${project_id}/serviceAccounts/${environment}-pipeline-sa@${project_id}.iam.gserviceaccount.com"
+        
+      echo "{\"resultStatus\": \"SUCCEEDED\"}" > results.json
+      gsutil cp results.json "$CLOUD_DEPLOY_OUTPUT_GCS_PATH/results.json"
