@@ -23,7 +23,8 @@ customActions:
       
       gsutil cp /workspace/source.zip gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE}-${environment}.zip
       
-      gcloud infra-manager previews create preview-${CLOUD_DEPLOY_RELEASE}-${environment} \
+      PREV_ID=$(echo "p-${CLOUD_DEPLOY_RELEASE}-${environment}" | cut -c 1-39)
+      gcloud infra-manager previews create ${PREV_ID} \
         --gcs-source="gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE}-${environment}.zip" \
         --project="${project_id}" \
         --location="us-east1" \
@@ -53,7 +54,8 @@ customActions:
       
       gsutil cp /workspace/source.zip gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE}-${environment}.zip
       
-      gcloud infra-manager deployments apply deploy-${CLOUD_DEPLOY_RELEASE}-${environment} \
+      DEP_ID=$(echo "d-${CLOUD_DEPLOY_RELEASE}-${environment}" | cut -c 1-39)
+      gcloud infra-manager deployments apply ${DEP_ID} \
         --gcs-source="gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE}-${environment}.zip" \
         --project="${project_id}" \
         --location="us-east1" \
