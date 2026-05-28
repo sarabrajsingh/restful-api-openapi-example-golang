@@ -28,7 +28,7 @@ customActions:
         --gcs-source="gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE}-${environment}.zip" \
         --project="${project_id}" \
         --location="us-east1" \
-        --service-account="projects/${project_id}/serviceAccounts/${environment}-pipeline-sa@${project_id}.iam.gserviceaccount.com"
+        --service-account="projects/${project_id}/serviceAccounts/${pipeline_sa}@${project_id}.iam.gserviceaccount.com"
         
       echo '' > /workspace/src/manifest.yaml
       gsutil cp /workspace/src/manifest.yaml "$CLOUD_DEPLOY_OUTPUT_GCS_PATH/manifest.yaml"
@@ -59,7 +59,7 @@ customActions:
         --gcs-source="gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE}-${environment}.zip" \
         --project="${project_id}" \
         --location="us-east1" \
-        --service-account="projects/${project_id}/serviceAccounts/${environment}-pipeline-sa@${project_id}.iam.gserviceaccount.com"
+        --service-account="projects/${project_id}/serviceAccounts/${pipeline_sa}@${project_id}.iam.gserviceaccount.com"
         
       echo "{\"resultStatus\": \"SUCCEEDED\"}" > results.json
       gsutil cp results.json "$CLOUD_DEPLOY_OUTPUT_GCS_PATH/results.json"

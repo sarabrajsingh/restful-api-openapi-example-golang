@@ -17,6 +17,7 @@ description: Development environment
 deployParameters:
   project_id: "app1-dev-8c0e2f7a"
   environment: "dev"
+  pipeline_sa: "dev-pipeline-sa"
 executionConfigs:
 - usages:
   - RENDER
@@ -33,6 +34,7 @@ description: Staging environment
 deployParameters:
   project_id: "app1-test-8c0e2f7a"
   environment: "staging"
+  pipeline_sa: "test-pipeline-sa"
 executionConfigs:
 - usages:
   - RENDER
@@ -49,6 +51,7 @@ description: Production environment
 deployParameters:
   project_id: "app1-prod-8c0e2f7a"
   environment: "prod"
+  pipeline_sa: "prod-pipeline-sa"
 executionConfigs:
 - usages:
   - RENDER
