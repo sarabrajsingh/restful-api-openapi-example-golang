@@ -12,14 +12,25 @@ customActions:
     - "-c"
     - |
       set -e
+      apk add --no-cache zip
+      
+      mkdir -p /workspace/src
+      gsutil cp "$CLOUD_DEPLOY_INPUT_GCS_PATH" /workspace/source.tgz
+      tar -xzvf /workspace/source.tgz -C /workspace/src
+      
+      cd /workspace/src
+      zip -r /workspace/source.zip .
+      
+      gsutil cp /workspace/source.zip gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE_ID}.zip
+      
       gcloud infra-manager previews create preview-${CLOUD_DEPLOY_RELEASE_ID} \
-        --gcs-source="${CLOUD_DEPLOY_INPUT_GCS_PATH}" \
+        --gcs-source="gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE_ID}.zip" \
         --project="${project_id}" \
         --location="us-east1" \
         --service-account="projects/${project_id}/serviceAccounts/${environment}-pipeline-sa@${project_id}.iam.gserviceaccount.com"
         
-      echo '' > manifest.yaml
-      gsutil cp manifest.yaml "$CLOUD_DEPLOY_OUTPUT_GCS_PATH/manifest.yaml"
+      echo '' > /workspace/src/manifest.yaml
+      gsutil cp /workspace/src/manifest.yaml "$CLOUD_DEPLOY_OUTPUT_GCS_PATH/manifest.yaml"
       echo "{\"resultStatus\": \"SUCCEEDED\", \"manifestFile\": \"$CLOUD_DEPLOY_OUTPUT_GCS_PATH/manifest.yaml\"}" > results.json
       gsutil cp results.json "$CLOUD_DEPLOY_OUTPUT_GCS_PATH/results.json"
 - name: terraform-deploy
@@ -31,8 +42,19 @@ customActions:
     - "-c"
     - |
       set -e
+      apk add --no-cache zip
+      
+      mkdir -p /workspace/src
+      gsutil cp "$CLOUD_DEPLOY_INPUT_GCS_PATH" /workspace/source.tgz
+      tar -xzvf /workspace/source.tgz -C /workspace/src
+      
+      cd /workspace/src
+      zip -r /workspace/source.zip .
+      
+      gsutil cp /workspace/source.zip gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE_ID}.zip
+      
       gcloud infra-manager deployments apply deploy-${CLOUD_DEPLOY_RELEASE_ID} \
-        --gcs-source="${CLOUD_DEPLOY_INPUT_GCS_PATH}" \
+        --gcs-source="gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE_ID}.zip" \
         --project="${project_id}" \
         --location="us-east1" \
         --service-account="projects/${project_id}/serviceAccounts/${environment}-pipeline-sa@${project_id}.iam.gserviceaccount.com"
