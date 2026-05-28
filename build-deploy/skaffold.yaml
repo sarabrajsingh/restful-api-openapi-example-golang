@@ -51,7 +51,8 @@ customActions:
         --project="${project_id}" \
         --location="us-east1" \
         --service-account="projects/${project_id}/serviceAccounts/${pipeline_sa}@${project_id}.iam.gserviceaccount.com" \
-        --input-values=project_id="${project_id}",environment="${environment}"
+        --input-values=project_id="${project_id}",environment="${environment}" \
+        --import-existing-resources
         
       echo "{\"resultStatus\": \"SUCCEEDED\"}" > results.json
       gsutil cp results.json "$CLOUD_DEPLOY_OUTPUT_GCS_PATH/results.json"
