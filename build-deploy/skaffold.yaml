@@ -21,10 +21,10 @@ customActions:
       cd /workspace/src
       zip -r /workspace/source.zip .
       
-      gsutil cp /workspace/source.zip gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE_ID}.zip
+      gsutil cp /workspace/source.zip gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE}-${environment}.zip
       
-      gcloud infra-manager previews create preview-${CLOUD_DEPLOY_RELEASE_ID} \
-        --gcs-source="gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE_ID}.zip" \
+      gcloud infra-manager previews create preview-${CLOUD_DEPLOY_RELEASE}-${environment} \
+        --gcs-source="gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE}-${environment}.zip" \
         --project="${project_id}" \
         --location="us-east1" \
         --service-account="projects/${project_id}/serviceAccounts/${environment}-pipeline-sa@${project_id}.iam.gserviceaccount.com"
@@ -51,10 +51,10 @@ customActions:
       cd /workspace/src
       zip -r /workspace/source.zip .
       
-      gsutil cp /workspace/source.zip gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE_ID}.zip
+      gsutil cp /workspace/source.zip gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE}-${environment}.zip
       
-      gcloud infra-manager deployments apply deploy-${CLOUD_DEPLOY_RELEASE_ID} \
-        --gcs-source="gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE_ID}.zip" \
+      gcloud infra-manager deployments apply deploy-${CLOUD_DEPLOY_RELEASE}-${environment} \
+        --gcs-source="gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE}-${environment}.zip" \
         --project="${project_id}" \
         --location="us-east1" \
         --service-account="projects/${project_id}/serviceAccounts/${environment}-pipeline-sa@${project_id}.iam.gserviceaccount.com"
