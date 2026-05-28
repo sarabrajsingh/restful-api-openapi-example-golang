@@ -11,8 +11,9 @@ customActions:
     args:
     - "-c"
     - |
+      set -e
       gcloud infra-manager previews create preview-${CLOUD_DEPLOY_RELEASE_ID} \
-        --config-source="${CLOUD_DEPLOY_INPUT_GCS_PATH}" \
+        --gcs-source="${CLOUD_DEPLOY_INPUT_GCS_PATH}" \
         --project="${project_id}" \
         --location="us-east1"
         
@@ -28,8 +29,9 @@ customActions:
     args:
     - "-c"
     - |
+      set -e
       gcloud infra-manager deployments apply deploy-${CLOUD_DEPLOY_RELEASE_ID} \
-        --config-source="${CLOUD_DEPLOY_INPUT_GCS_PATH}" \
+        --gcs-source="${CLOUD_DEPLOY_INPUT_GCS_PATH}" \
         --project="${project_id}" \
         --location="us-east1" \
         --service-account="projects/${project_id}/serviceAccounts/${environment}-pipeline-sa@${project_id}.iam.gserviceaccount.com"
