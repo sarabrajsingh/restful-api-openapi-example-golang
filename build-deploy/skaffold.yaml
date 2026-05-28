@@ -15,7 +15,8 @@ customActions:
       gcloud infra-manager previews create preview-${CLOUD_DEPLOY_RELEASE_ID} \
         --gcs-source="${CLOUD_DEPLOY_INPUT_GCS_PATH}" \
         --project="${project_id}" \
-        --location="us-east1"
+        --location="us-east1" \
+        --service-account="projects/${project_id}/serviceAccounts/${environment}-pipeline-sa@${project_id}.iam.gserviceaccount.com"
         
       echo '' > manifest.yaml
       gsutil cp manifest.yaml "$CLOUD_DEPLOY_OUTPUT_GCS_PATH/manifest.yaml"
