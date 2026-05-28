@@ -44,16 +44,6 @@ customActions:
     - "-c"
     - |
       set -e
-      apk add --no-cache zip
-      
-      mkdir -p /workspace/src
-      gsutil cp "$CLOUD_DEPLOY_INPUT_GCS_PATH" /workspace/source.tgz
-      tar -xzvf /workspace/source.tgz -C /workspace/src
-      
-      cd /workspace/src/terraform
-      zip -r /workspace/source.zip .
-      
-      gsutil cp /workspace/source.zip gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE}-${environment}.zip
       
       DEP_ID=$(echo "d-${CLOUD_DEPLOY_RELEASE}-${environment}" | cut -c 1-39)
       gcloud infra-manager deployments apply ${DEP_ID} \
