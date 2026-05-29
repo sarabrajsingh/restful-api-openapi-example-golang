@@ -45,7 +45,7 @@ customActions:
     - |
       set -e
       
-      DEP_ID=$(echo "d-${CLOUD_DEPLOY_RELEASE}-${environment}" | cut -c 1-39)
+      DEP_ID="app1-${environment}"
       gcloud infra-manager deployments apply ${DEP_ID} \
         --gcs-source="gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE}-${environment}.zip" \
         --project="${project_id}" \
