@@ -26,6 +26,10 @@ resource "google_storage_bucket" "bucket" {
   location      = "US"
   force_destroy = true
 
+  labels = {
+    managed_by  = "foobar"
+  }
+
   uniform_bucket_level_access = true
 
   versioning {
