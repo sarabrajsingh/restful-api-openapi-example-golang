@@ -5,7 +5,6 @@ terraform {
       version = "~> 5.0"
     }
   }
-  backend "gcs" {}
 }
 
 provider "google" {
@@ -26,6 +25,10 @@ resource "google_storage_bucket" "bucket" {
   name          = "${var.project_id}-application-bucket"
   location      = "US"
   force_destroy = true
+
+  labels = {
+    managed_by  = "foobar"
+  }
 
   uniform_bucket_level_access = true
 

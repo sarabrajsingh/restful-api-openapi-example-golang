@@ -1,7 +1,7 @@
 apiVersion: skaffold/v4beta7
 kind: Config
 metadata:
-  name: terraform-delivery-pipeline
+  name: app1-delivery-pipeline
 customActions:
 - name: terraform-render
   containers:
@@ -11,15 +11,30 @@ customActions:
     args:
     - "-c"
     - |
-      wget https://releases.hashicorp.com/terraform/1.5.7/terraform_1.5.7_linux_amd64.zip
-      unzip terraform_1.5.7_linux_amd64.zip -d /usr/local/bin/
+      set -e
+      apk add --no-cache zip
       
-      mkdir -p /workspace
+      mkdir -p /workspace/src
       gsutil cp "$CLOUD_DEPLOY_INPUT_GCS_PATH" /workspace/source.tgz
-      tar -xzvf /workspace/source.tgz -C /workspace
+      tar -xzvf /workspace/source.tgz -C /workspace/src
       
-      cd /workspace
-      sh ./terraform/render.sh
+      cd /workspace/src/terraform
+      zip -r /workspace/source.zip .
+      
+      gsutil cp /workspace/source.zip gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE}-${environment}.zip
+      
+      PREV_ID=$(echo "p-${CLOUD_DEPLOY_RELEASE}-${environment}" | cut -c 1-39)
+      gcloud infra-manager previews create ${PREV_ID} \
+        --gcs-source="gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE}-${environment}.zip" \
+        --project="${project_id}" \
+        --location="us-east1" \
+        --service-account="projects/${project_id}/serviceAccounts/${pipeline_sa}@${project_id}.iam.gserviceaccount.com" \
+        --input-values=project_id="${project_id}",environment="${environment}"
+        
+      echo '' > /workspace/src/manifest.yaml
+      gsutil cp /workspace/src/manifest.yaml "$CLOUD_DEPLOY_OUTPUT_GCS_PATH/manifest.yaml"
+      echo "{\"resultStatus\": \"SUCCEEDED\", \"manifestFile\": \"$CLOUD_DEPLOY_OUTPUT_GCS_PATH/manifest.yaml\"}" > results.json
+      gsutil cp results.json "$CLOUD_DEPLOY_OUTPUT_GCS_PATH/results.json"
 - name: terraform-deploy
   containers:
   - name: terraform-deploy-container
@@ -28,12 +43,16 @@ customActions:
     args:
     - "-c"
     - |
-      wget https://releases.hashicorp.com/terraform/1.5.7/terraform_1.5.7_linux_amd64.zip
-      unzip terraform_1.5.7_linux_amd64.zip -d /usr/local/bin/
+      set -e
       
-      mkdir -p /workspace
-      gsutil cp "$CLOUD_DEPLOY_INPUT_GCS_PATH/workspace.tgz" /workspace/workspace.tgz
-      tar -xzvf /workspace/workspace.tgz -C /workspace
-      
-      cd /workspace
-      sh ./terraform/deploy.sh
+      DEP_ID="app1-${environment}"
+      gcloud infra-manager deployments apply ${DEP_ID} \
+        --gcs-source="gs://app1-cicd-8c0e2f7a-tfstate/previews/source-${CLOUD_DEPLOY_RELEASE}-${environment}.zip" \
+        --project="${project_id}" \
+        --location="us-east1" \
+        --service-account="projects/${project_id}/serviceAccounts/${pipeline_sa}@${project_id}.iam.gserviceaccount.com" \
+        --input-values=project_id="${project_id}",environment="${environment}" \
+        --import-existing-resources
+        
+      echo "{\"resultStatus\": \"SUCCEEDED\"}" > results.json
+      gsutil cp results.json "$CLOUD_DEPLOY_OUTPUT_GCS_PATH/results.json"

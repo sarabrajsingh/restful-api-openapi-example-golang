@@ -1,7 +1,7 @@
 apiVersion: deploy.cloud.google.com/v1
 kind: DeliveryPipeline
 metadata:
-  name: terraform-delivery-pipeline
+  name: app1-delivery-pipeline
 description: Delivery pipeline for Terraform GCS bucket deployments
 serialPipeline:
   stages:
@@ -17,6 +17,7 @@ description: Development environment
 deployParameters:
   project_id: "app1-dev-8c0e2f7a"
   environment: "dev"
+  pipeline_sa: "dev-pipeline-sa"
 executionConfigs:
 - usages:
   - RENDER
@@ -30,9 +31,11 @@ kind: Target
 metadata:
   name: staging
 description: Staging environment
+requireApproval: true
 deployParameters:
   project_id: "app1-test-8c0e2f7a"
   environment: "staging"
+  pipeline_sa: "test-pipeline-sa"
 executionConfigs:
 - usages:
   - RENDER
@@ -46,9 +49,11 @@ kind: Target
 metadata:
   name: prod
 description: Production environment
+requireApproval: true
 deployParameters:
   project_id: "app1-prod-8c0e2f7a"
   environment: "prod"
+  pipeline_sa: "prod-pipeline-sa"
 executionConfigs:
 - usages:
   - RENDER
