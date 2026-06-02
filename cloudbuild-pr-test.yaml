@@ -2,7 +2,7 @@ steps:
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
     id: 'infra-manager-preview-staging'
     env:
-      - 'SHORT_SHA=${_SHORT_SHA}'
+      - 'SHORT_SHA=${SHORT_SHA}'
     script: |
       #!/bin/sh
       set -e
