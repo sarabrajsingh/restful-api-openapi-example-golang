@@ -1,36 +1,31 @@
 steps:
-  - name: 'ubuntu'
-    id: 'hello-world'
-    script: |
-      #!/usr/bin/env bash
-      echo "✅ HELLO WORLD!"
-      echo "🚀 The Cloud Build trigger successfully received the webhook."
-
-  - name: 'ubuntu'
-    id: 'verify-clone'
-    script: |
-      #!/usr/bin/env bash
-      echo "📁 Verifying repository contents..."
-      ls -la
-      echo "🎉 Developer Connect successfully pulled the code across the project boundary!"
-
-  # Step 3: Pure Terraform Validation 
-  - name: 'hashicorp/terraform:1.5.7'
-    id: 'terraform-plan'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
+    id: 'infra-manager-preview-dev'
+    env:
+      - 'SHORT_SHA=${SHORT_SHA}'
     script: |
       #!/bin/sh
       set -e
       
-      echo "🔍 Running Terraform Plan for DEV..."
+      echo "📦 Packaging Terraform blueprint..."
       cd terraform
-
-      terraform init -reconfigure \
-        -backend-config="bucket=app1-cicd-8c0e2f7a-tfstate" \
-        -backend-config="prefix=terraform/state/dev"
-
-      terraform validate
-
-      terraform plan -var="project_id=app1-dev-dryrun" -var="environment=dev"
+      apk add --no-cache zip
+      zip -r /tmp/blueprint.zip .
+      
+      echo "📤 Uploading packaged zip to GCS..."
+      gcloud storage cp /tmp/blueprint.zip gs://app1-cicd-8c0e2f7a-tfstate/previews/source-pr-${SHORT_SHA}-dev.zip
+      
+      echo "🔍 Creating dry-run Infrastructure Manager Preview for DEV..."
+      # Truncate Preview ID to be safely below 40 characters:
+      PREV_ID=$(echo "p-pr-${SHORT_SHA}-dev" | cut -c 1-39)
+      
+      gcloud infra-manager previews create ${PREV_ID} \
+        --gcs-source="gs://app1-cicd-8c0e2f7a-tfstate/previews/source-pr-${SHORT_SHA}-dev.zip" \
+        --project="app1-dev-8c0e2f7a" \
+        --location="us-east1" \
+        --service-account="projects/app1-dev-8c0e2f7a/serviceAccounts/dev-pipeline-sa@app1-dev-8c0e2f7a.iam.gserviceaccount.com" \
+        --input-values=project_id="app1-dev-8c0e2f7a",environment="dev" \
+        --impersonate-service-account="dev-pipeline-sa@app1-dev-8c0e2f7a.iam.gserviceaccount.com"
 
 options:
   logging: CLOUD_LOGGING_ONLY

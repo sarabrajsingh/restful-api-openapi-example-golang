@@ -27,12 +27,19 @@ resource "google_storage_bucket" "bucket" {
   force_destroy = true
 
   labels = {
-    managed_by  = "foobar"
+    managed_by  = "foobar barfoo"
   }
 
   uniform_bucket_level_access = true
 
   versioning {
     enabled = true
+  }
+}
+
+resource "google_pubsub_topic" "test_topic" {
+  name = "pr-test-topic"
+  labels = {
+    managed_by  = "foobar barfoo another label"
   }
 }
