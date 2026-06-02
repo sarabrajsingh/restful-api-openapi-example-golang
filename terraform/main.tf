@@ -40,6 +40,6 @@ resource "google_storage_bucket" "bucket" {
 resource "google_pubsub_topic" "test_topic" {
   name = "pr-test-topic"
   labels = {
-    managed_by  = "foobar barfoo"
+    managed_by  = "foobar barfoo another label"
   }
 }
