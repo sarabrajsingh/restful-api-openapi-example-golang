@@ -27,7 +27,7 @@ resource "google_storage_bucket" "bucket" {
   force_destroy = true
 
   labels = {
-    managed_by  = "foobar"
+    managed_by  = "foobar barfoo"
   }
 
   uniform_bucket_level_access = true
