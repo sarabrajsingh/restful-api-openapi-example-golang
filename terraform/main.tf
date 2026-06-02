@@ -36,3 +36,10 @@ resource "google_storage_bucket" "bucket" {
     enabled = true
   }
 }
+
+resource "google_pubsub_topic" "test_topic" {
+  name = "pr-test-topic"
+  labels = {
+    managed_by  = "foobar barfoo"
+  }
+}
