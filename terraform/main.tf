@@ -27,7 +27,7 @@ resource "google_storage_bucket" "bucket" {
   force_destroy = true
 
   labels = {
-    managed_by  = "foobar barfoo"
+    managed_by  = "foobarbarfoo"
   }
 
   uniform_bucket_level_access = true
@@ -40,6 +40,6 @@ resource "google_storage_bucket" "bucket" {
 resource "google_pubsub_topic" "test_topic" {
   name = "pr-test-topic"
   labels = {
-    managed_by  = "foobar barfoo another label"
+    managed_by  = "foobar"
   }
 }
