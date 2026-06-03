@@ -7,20 +7,12 @@ steps:
       #!/bin/sh
       set -e
       
-      echo "📦 Packaging Terraform blueprint..."
-      cd terraform
-      apk add --no-cache zip
-      zip -r /tmp/blueprint.zip .
-      
-      echo "📤 Uploading packaged zip to GCS..."
-      gcloud storage cp /tmp/blueprint.zip gs://app1-cicd-8c0e2f7a-tfstate/previews/source-pr-${SHORT_SHA}-prod.zip
-      
-      echo "🔍 Creating dry-run Infrastructure Manager Preview for PROD..."
+      echo "🔍 Creating dry-run Infrastructure Manager Preview for PROD using local-source..."
       # Truncate Preview ID to be safely below 40 characters:
       PREV_ID=$(echo "p-pr-${SHORT_SHA}-prod" | cut -c 1-39)
       
       gcloud infra-manager previews create ${PREV_ID} \
-        --gcs-source="gs://app1-cicd-8c0e2f7a-tfstate/previews/source-pr-${SHORT_SHA}-prod.zip" \
+        --local-source="./terraform" \
         --project="app1-prod-8c0e2f7a" \
         --location="us-east1" \
         --service-account="projects/app1-prod-8c0e2f7a/serviceAccounts/prod-pipeline-sa@app1-prod-8c0e2f7a.iam.gserviceaccount.com" \
