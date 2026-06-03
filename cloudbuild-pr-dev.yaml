@@ -18,7 +18,7 @@ steps:
         --service-account="projects/app1-dev-8c0e2f7a/serviceAccounts/dev-pipeline-sa@app1-dev-8c0e2f7a.iam.gserviceaccount.com" \
         --input-values=project_id="app1-dev-8c0e2f7a",environment="dev" \
         --impersonate-service-account="dev-pipeline-sa@app1-dev-8c0e2f7a.iam.gserviceaccount.com" \
-        --deployment="app1-dev"
+        --deployment="projects/app1-dev-8c0e2f7a/locations/us-east1/deployments/app1-dev"
         
       echo "📋 Fetching preview execution details..."
       LOGS_URI=$(gcloud infra-manager previews describe ${PREV_ID} \
