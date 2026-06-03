@@ -18,6 +18,18 @@ steps:
         --service-account="projects/app1-dev-8c0e2f7a/serviceAccounts/dev-pipeline-sa@app1-dev-8c0e2f7a.iam.gserviceaccount.com" \
         --input-values=project_id="app1-dev-8c0e2f7a",environment="dev" \
         --impersonate-service-account="dev-pipeline-sa@app1-dev-8c0e2f7a.iam.gserviceaccount.com"
+        
+      echo "📋 Fetching preview execution details..."
+      BUILD_ID=$(gcloud infra-manager previews describe ${PREV_ID} \
+        --project="app1-dev-8c0e2f7a" \
+        --location="us-east1" \
+        --impersonate-service-account="dev-pipeline-sa@app1-dev-8c0e2f7a.iam.gserviceaccount.com" \
+        --format="value(build)")
+        
+      echo "📖 Streaming Terraform Plan logs for Build ID: ${BUILD_ID}..."
+      gcloud builds log ${BUILD_ID} \
+        --project="app1-dev-8c0e2f7a" \
+        --impersonate-service-account="dev-pipeline-sa@app1-dev-8c0e2f7a.iam.gserviceaccount.com"
 
 options:
   logging: CLOUD_LOGGING_ONLY
