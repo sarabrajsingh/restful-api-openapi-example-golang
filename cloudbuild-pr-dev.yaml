@@ -26,8 +26,9 @@ steps:
         --impersonate-service-account="dev-pipeline-sa@app1-dev-8c0e2f7a.iam.gserviceaccount.com" \
         --format="value(logs)")
         
-      echo "📂 Listing log files under: ${LOGS_URI}"
-      gcloud storage ls "${LOGS_URI}/**" --impersonate-service-account="dev-pipeline-sa@app1-dev-8c0e2f7a.iam.gserviceaccount.com"
+      echo "📖 Streaming Terraform Plan logs from Cloud Storage..."
+      gcloud storage cat "${LOGS_URI}/log-*.txt" \
+        --impersonate-service-account="dev-pipeline-sa@app1-dev-8c0e2f7a.iam.gserviceaccount.com"
 
 options:
   logging: CLOUD_LOGGING_ONLY

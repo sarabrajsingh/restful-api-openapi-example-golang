@@ -20,15 +20,14 @@ steps:
         --impersonate-service-account="prod-pipeline-sa@app1-prod-8c0e2f7a.iam.gserviceaccount.com"
         
       echo "📋 Fetching preview execution details..."
-      BUILD_ID=$(gcloud infra-manager previews describe ${PREV_ID} \
+      LOGS_URI=$(gcloud infra-manager previews describe ${PREV_ID} \
         --project="app1-prod-8c0e2f7a" \
         --location="us-east1" \
         --impersonate-service-account="prod-pipeline-sa@app1-prod-8c0e2f7a.iam.gserviceaccount.com" \
-        --format="value(build)")
+        --format="value(logs)")
         
-      echo "📖 Streaming Terraform Plan logs for Build ID: ${BUILD_ID}..."
-      gcloud builds log ${BUILD_ID} \
-        --project="app1-prod-8c0e2f7a" \
+      echo "📖 Streaming Terraform Plan logs from Cloud Storage..."
+      gcloud storage cat "${LOGS_URI}/log-*.txt" \
         --impersonate-service-account="prod-pipeline-sa@app1-prod-8c0e2f7a.iam.gserviceaccount.com"
 
 options:
