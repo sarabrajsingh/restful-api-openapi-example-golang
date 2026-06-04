@@ -27,7 +27,7 @@ resource "google_storage_bucket" "bucket" {
   force_destroy = true
 
   labels = {
-    managed_by  = "manual-verification-run"
+    managed_by  = "manual-verification-run-test-again"
   }
 
   uniform_bucket_level_access = true
