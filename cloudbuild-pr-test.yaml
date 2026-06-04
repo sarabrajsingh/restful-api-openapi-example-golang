@@ -7,24 +7,28 @@ steps:
       #!/bin/sh
       set -e
       
-      echo "📦 Packaging Terraform blueprint..."
-      cd terraform
-      apk add --no-cache zip
-      zip -r /tmp/blueprint.zip .
-      
-      echo "📤 Uploading packaged zip to GCS..."
-      gcloud storage cp /tmp/blueprint.zip gs://app1-cicd-8c0e2f7a-tfstate/previews/source-pr-${SHORT_SHA}-staging.zip
-      
-      echo "🔍 Creating dry-run Infrastructure Manager Preview for STAGING..."
+      echo "🔍 Creating dry-run Infrastructure Manager Preview for STAGING linked to deployment..."
       # Truncate Preview ID to be safely below 40 characters:
       PREV_ID=$(echo "p-pr-${SHORT_SHA}-staging" | cut -c 1-39)
       
       gcloud infra-manager previews create ${PREV_ID} \
-        --gcs-source="gs://app1-cicd-8c0e2f7a-tfstate/previews/source-pr-${SHORT_SHA}-staging.zip" \
+        --local-source="./terraform" \
         --project="app1-test-8c0e2f7a" \
         --location="us-east1" \
         --service-account="projects/app1-test-8c0e2f7a/serviceAccounts/test-pipeline-sa@app1-test-8c0e2f7a.iam.gserviceaccount.com" \
         --input-values=project_id="app1-test-8c0e2f7a",environment="staging" \
+        --impersonate-service-account="test-pipeline-sa@app1-test-8c0e2f7a.iam.gserviceaccount.com" \
+        --deployment="projects/app1-test-8c0e2f7a/locations/us-east1/deployments/app1-staging"
+        
+      echo "📋 Fetching preview execution details..."
+      LOGS_URI=$(gcloud infra-manager previews describe ${PREV_ID} \
+        --project="app1-test-8c0e2f7a" \
+        --location="us-east1" \
+        --impersonate-service-account="test-pipeline-sa@app1-test-8c0e2f7a.iam.gserviceaccount.com" \
+        --format="value(logs)")
+        
+      echo "📖 Streaming Terraform Plan logs from Cloud Storage..."
+      gcloud storage cat "${LOGS_URI}/log-*.txt" \
         --impersonate-service-account="test-pipeline-sa@app1-test-8c0e2f7a.iam.gserviceaccount.com"
 
 options:
