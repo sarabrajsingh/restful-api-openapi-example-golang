@@ -3,33 +3,50 @@ steps:
     id: 'infra-manager-preview-prod'
     env:
       - 'SHORT_SHA=${SHORT_SHA}'
+      - 'PROJECT_ID=${_PROJECT_ID}'
+      - 'LOCATION=${_LOCATION}'
+      - 'PIPELINE_SA=${_PIPELINE_SA}'
+      - 'DEPLOYMENT_ID=${_DEPLOYMENT_ID}'
+      - 'ENVIRONMENT=${_ENVIRONMENT}'
     script: |
       #!/bin/sh
       set -e
       
-      echo "🔍 Creating dry-run Infrastructure Manager Preview for PROD linked to deployment..."
-      # Truncate Preview ID to be safely below 40 characters:
-      PREV_ID=$(echo "p-pr-${SHORT_SHA}-prod" | cut -c 1-39)
+      echo "🔍 Creating dry-run Infrastructure Manager Preview for ${ENVIRONMENT} linked to deployment..."
+      PREV_ID=$(echo "p-pr-${SHORT_SHA}-${ENVIRONMENT}" | cut -c 1-39)
       
       gcloud infra-manager previews create ${PREV_ID} \
         --local-source="./terraform" \
-        --project="app1-prod-8c0e2f7a" \
-        --location="us-east1" \
-        --service-account="projects/app1-prod-8c0e2f7a/serviceAccounts/prod-pipeline-sa@app1-prod-8c0e2f7a.iam.gserviceaccount.com" \
-        --input-values=project_id="app1-prod-8c0e2f7a",environment="prod" \
-        --impersonate-service-account="prod-pipeline-sa@app1-prod-8c0e2f7a.iam.gserviceaccount.com" \
-        --deployment="projects/app1-prod-8c0e2f7a/locations/us-east1/deployments/app1-prod"
+        --project="${PROJECT_ID}" \
+        --location="${LOCATION}" \
+        --service-account="projects/${PROJECT_ID}/serviceAccounts/${PIPELINE_SA}" \
+        --input-values=project_id="${PROJECT_ID}",environment="${ENVIRONMENT}" \
+        --impersonate-service-account="${PIPELINE_SA}" \
+        --deployment="projects/${PROJECT_ID}/locations/${LOCATION}/deployments/${DEPLOYMENT_ID}"
+
+      echo "📦 Exporting structured Preview plan artifacts..."
+      gcloud infra-manager previews export projects/${PROJECT_ID}/locations/${LOCATION}/previews/${PREV_ID} \
+        --impersonate-service-account="${PIPELINE_SA}" \
+        --file=/workspace/preview-export.tgz
         
-      echo "📋 Fetching preview execution details..."
-      LOGS_URI=$(gcloud infra-manager previews describe ${PREV_ID} \
-        --project="app1-prod-8c0e2f7a" \
-        --location="us-east1" \
-        --impersonate-service-account="prod-pipeline-sa@app1-prod-8c0e2f7a.iam.gserviceaccount.com" \
-        --format="value(logs)")
-        
-      echo "📖 Streaming Terraform Plan logs from Cloud Storage..."
-      gcloud storage cat "${LOGS_URI}/log-*.txt" \
-        --impersonate-service-account="prod-pipeline-sa@app1-prod-8c0e2f7a.iam.gserviceaccount.com"
+      echo "📂 Unpacking exported preview results..."
+      mkdir -p /workspace/preview-results/
+      tar -xzvf /workspace/preview-export.tgz -C /workspace/preview-results/
+
+  - name: 'hashicorp/terraform:1.5.7'
+    id: 'terraform-show-prod'
+    script: |
+      #!/bin/sh
+      set -e
+      echo "📋 Displaying generated Terraform Plan diff via terraform show..."
+      terraform show /workspace/preview-results/tfplan || terraform show /workspace/preview-results/terraform-plan.json || cat /workspace/preview-results/terraform-plan.json
+
+substitutions:
+  _PROJECT_ID: "app1-prod-8c0e2f7a"
+  _LOCATION: "us-east1"
+  _PIPELINE_SA: "prod-pipeline-sa@app1-prod-8c0e2f7a.iam.gserviceaccount.com"
+  _DEPLOYMENT_ID: "app1-prod"
+  _ENVIRONMENT: "prod"
 
 options:
   logging: CLOUD_LOGGING_ONLY
