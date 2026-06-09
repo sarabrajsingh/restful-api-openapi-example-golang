@@ -27,11 +27,7 @@ steps:
       echo "📦 Exporting structured Preview plan artifacts..."
       gcloud infra-manager previews export projects/${PROJECT_ID}/locations/${LOCATION}/previews/${PREV_ID} \
         --impersonate-service-account="${PIPELINE_SA}" \
-        --file=/workspace/preview-export.tgz
-        
-      echo "📂 Unpacking exported preview results..."
-      mkdir -p /workspace/preview-results/
-      tar -xzvf /workspace/preview-export.tgz -C /workspace/preview-results/
+        --file=/workspace/preview
 
   - name: 'hashicorp/terraform:1.5.7'
     id: 'terraform-show-dev'
@@ -39,7 +35,7 @@ steps:
       #!/bin/sh
       set -e
       echo "📋 Displaying generated Terraform Plan diff via terraform show..."
-      terraform show /workspace/preview-results/tfplan || terraform show /workspace/preview-results/terraform-plan.json || cat /workspace/preview-results/terraform-plan.json
+      terraform show /workspace/preview.tfplan || cat /workspace/preview.json
 
 substitutions:
   _PROJECT_ID: "app1-dev-8c0e2f7a"

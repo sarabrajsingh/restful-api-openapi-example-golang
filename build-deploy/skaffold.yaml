@@ -29,13 +29,10 @@ customActions:
         --deployment="projects/${project_id}/locations/us-east1/deployments/app1-${environment}"
         
       gcloud infra-manager previews export projects/${project_id}/locations/us-east1/previews/${PREV_ID} \
-        --file=/workspace/src/preview-export.tgz
+        --file=/workspace/src/preview
         
-      mkdir -p /workspace/src/preview-results/
-      tar -xzvf /workspace/src/preview-export.tgz -C /workspace/src/preview-results/
-      
       echo "Infrastructure Delta Plan for ${environment}:" > /workspace/src/manifest.yaml
-      cat /workspace/src/preview-results/terraform-plan.json >> /workspace/src/manifest.yaml
+      cat /workspace/src/preview.json >> /workspace/src/manifest.yaml
       
       gsutil cp /workspace/src/manifest.yaml "$CLOUD_DEPLOY_OUTPUT_GCS_PATH/manifest.yaml"
       echo "{\"resultStatus\": \"SUCCEEDED\", \"manifestFile\": \"$CLOUD_DEPLOY_OUTPUT_GCS_PATH/manifest.yaml\"}" > results.json
