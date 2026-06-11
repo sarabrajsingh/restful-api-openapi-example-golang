@@ -33,7 +33,6 @@ steps:
     env:
       - 'BUILD_ID=$BUILD_ID'
       - 'SHORT_SHA=$SHORT_SHA'
-      - 'DEP_ID=$DEP_ID'
     args:
       - '-c'
       - |
